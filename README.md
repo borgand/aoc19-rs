@@ -1,8 +1,10 @@
 <img src="./.assets/christmas_ferris.png" width="164">
 
-# 🎄 Advent of Code {year}
+# 🎄 Advent of Code 2019
 
-Solutions for [Advent of Code](https://adventofcode.com/) in [Rust](https://www.rust-lang.org/).
+**DISCLAIMER:** Total Rust beginner here. This is my first time using Rust, so please be gentle. 😅
+
+Solutions for [Advent of Code 2019](https://adventofcode.com/2019) in [Rust](https://www.rust-lang.org/).
 
 <!--- advent_readme_stars table --->
 
