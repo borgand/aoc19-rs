@@ -7,6 +7,11 @@
 Solutions for [Advent of Code 2019](https://adventofcode.com/2019) in [Rust](https://www.rust-lang.org/).
 
 <!--- advent_readme_stars table --->
+## 2019 Results
+
+| Day | Part 1 | Part 2 |
+| :---: | :---: | :---: |
+<!--- advent_readme_stars table --->
 
 <!--- benchmarking table --->
 
