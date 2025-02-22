@@ -30,9 +30,36 @@ pub fn pp_vec<T: Display>(data: &Vec<T>, highlights: &[usize]) {
 }
 
 
+// define a struct for an instruction
+pub struct Instruction {
+    pub opcode: usize,
+    pub args: usize,
+    pub operation: fn(&mut Vec<usize>, usize, usize, usize) -> (),
+}
+
+// define a list of intcodes and their count of arguments
+pub fn get_intcodes() -> Vec<Instruction> {
+    vec![
+        // Add
+        Instruction { opcode: 1, args: 3,
+            operation: |data: &mut Vec<usize>, a: usize, b: usize, c: usize| { data[c] = data[a] + data[b]; },
+        },
+
+        // Multiply
+        Instruction { opcode: 2, args: 3,
+            operation: |data: &mut Vec<usize>, a: usize, b: usize, c: usize| { data[c] = data[a] * data[b]; },
+        },
+
+        // Halt
+        Instruction { opcode: 99, args: 0,
+            operation: |_, _, _, _| (),
+        },
+    ]
+}
 
 // Intcode computer
 pub fn intcomp(pc: usize, data: &mut Vec<usize>, debug:bool) -> usize {
+    let intcodes = get_intcodes();
     let mut pc = pc;
     let mut opcode = data[pc];
     while opcode != 99 {
@@ -40,26 +67,21 @@ pub fn intcomp(pc: usize, data: &mut Vec<usize>, debug:bool) -> usize {
             print!("d1: ");
             pp_vec(data, &[pc,pc + 1,pc + 2, pc + 3]);
         }
-        let a = data[pc + 1];
-        let b = data[pc + 2];
-        let c = data[pc + 3];
-        match opcode {
-            1 => {
-                data[c] = data[a] + data[b];
+        if let Some(inst) = intcodes.iter().find(|i| i.opcode == opcode) {
+            let a = data[pc + 1];
+            let b = data[pc + 2];
+            let c = data[pc + 3];
+            (inst.operation)(data, a, b, c);
+
+            if debug {
+                print!("d2: ");
+                pp_vec(data, &[pc, pc+1, pc+2, c]);
+                println!();
             }
-            2 => {
-                data[c] = data[a] * data[b];
-            }
-            _ => {
-                panic!("Halt and Catch Fire: {}", opcode);
-            }
+            pc += inst.args + 1;
+        } else {
+            panic!("Halt and Catch Fire: {}", opcode);
         }
-        if debug {
-            print!("d2: ");
-            pp_vec(data, &[pc,pc + 1,pc + 2, c]);
-            println!();
-        }
-        pc += 4;
         opcode = data[pc];
     }
     data[0]
