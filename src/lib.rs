@@ -29,3 +29,38 @@ pub fn pp_vec<T: Display>(data: &Vec<T>, highlights: &[usize]) {
     println!();
 }
 
+
+
+// Intcode computer
+pub fn intcomp(pc: usize, data: &mut Vec<usize>, debug:bool) -> usize {
+    let mut pc = pc;
+    let mut opcode = data[pc];
+    while opcode != 99 {
+        if debug {
+            print!("d1: ");
+            pp_vec(data, &[pc,pc + 1,pc + 2, pc + 3]);
+        }
+        let a = data[pc + 1];
+        let b = data[pc + 2];
+        let c = data[pc + 3];
+        match opcode {
+            1 => {
+                data[c] = data[a] + data[b];
+            }
+            2 => {
+                data[c] = data[a] * data[b];
+            }
+            _ => {
+                panic!("Halt and Catch Fire: {}", opcode);
+            }
+        }
+        if debug {
+            print!("d2: ");
+            pp_vec(data, &[pc,pc + 1,pc + 2, c]);
+            println!();
+        }
+        pc += 4;
+        opcode = data[pc];
+    }
+    data[0]
+}
