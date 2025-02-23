@@ -5,12 +5,16 @@ advent_of_code::solution!(2);
 
 static NOUN: AtomicUsize = AtomicUsize::new(12);
 static VERB: AtomicUsize = AtomicUsize::new(2);
+static MAXNOUN: AtomicUsize = AtomicUsize::new(100);
+static MAXVERB: AtomicUsize = AtomicUsize::new(100);
 static DEBUG: AtomicBool = AtomicBool::new(false);
 
-pub fn set_params(noun: usize, verb: usize, debug: bool) {
+pub fn set_params(noun: usize, verb: usize, debug: bool, maxnoun: usize, maxverb: usize) {
     // use static atomic variables with most strict thread ordering
     NOUN.store(noun, Ordering::SeqCst);
     VERB.store(verb, Ordering::SeqCst);
+    MAXNOUN.store(maxnoun, Ordering::SeqCst);
+    MAXVERB.store(maxverb, Ordering::SeqCst);
     DEBUG.store(debug, Ordering::SeqCst);
 }
 
@@ -30,16 +34,18 @@ pub fn part_one(input: &str) -> Option<u64> {
 }
 
 pub fn part_two(input: &str) -> Option<u64> {
-    let mut data: Vec<usize> = input
+    let data: Vec<usize> = input
         .trim()
         .split(',')
         .map(|x| x.parse().unwrap())
         .collect();
     // set the noun and verb values
     let debug = DEBUG.load(Ordering::SeqCst);
+    let maxnoun= MAXNOUN.load(Ordering::SeqCst);
+    let maxverb= MAXVERB.load(Ordering::SeqCst);
     // iterate over all possible noun and verb values
-    for noun in 0..100 {
-        for verb in 0..100 {
+    for noun in 0..maxnoun {
+        for verb in 0..maxverb {
             let mut data = data.clone();
             data[1] = noun;
             data[2] = verb;
@@ -57,14 +63,14 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        set_params(9,10,false);
+        set_params(9,10,false, 9, 10);
         let result = part_one(&advent_of_code::template::read_file("examples", DAY));
         assert_eq!(result, Some(3500));
     }
 
     #[test]
     fn test_part_two() {
-        set_params(9,10,false);
+        set_params(9,10,false, 9, 10);
         let result = part_two(&advent_of_code::template::read_file("examples", DAY));
         assert_eq!(result, None);
     }
